@@ -36,10 +36,14 @@ function isValidStr (str) {
  */
 exports.main = async (event, context) => {
   let { code, secret , appid } = event
-  if (!isValidStr(code) || !isValidStr(secret)) {
+  if (
+    !isValidStr(code) || 
+    !isValidStr(secret) ||
+    !isValidStr(appid)
+  ) {
     return {
       code: 2,
-      msg: '传入的 code / secret参数不合法'
+      msg: '传入的 code/secret/appid 不合法'
     }
   }
 

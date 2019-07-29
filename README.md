@@ -27,7 +27,7 @@ git clone git@github.com:TencentCloudBase/tcb-game-gomoku.git tcb-game-gomoku
 
 进入「云数据库」，创建 `rooms` / `scores` / `users` 这三个集合。
 
-创建配置文件，并将其中信息替换为自己的信息：
+创建配置文件，并将其中信息替换为自己的信息(appid,appsecret,env)：
 
 ```bash
 cd tcb-game-gomoku

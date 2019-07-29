@@ -1,5 +1,6 @@
 const { subscriber } = require('./shared/util.js')
-const { appSecret } = require('./config.js')
+const { appSecret , appId , env } = require('./config.js')
+
 
 //app.js
 App({
@@ -8,6 +9,7 @@ App({
       console.error('请使用 2.2.3 或以上的基础库以使用云能力')
     } else {
       wx.cloud.init({
+        env: env,
         traceUser: true,
       })
     }
@@ -30,6 +32,7 @@ App({
             name: 'openid',
             data: {
               code: res.code,
+              appid: appId,
               secret: appSecret
             }
           })

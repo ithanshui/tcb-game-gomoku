@@ -1,10 +1,10 @@
 const querystring = require('querystring')
 const request = require('request')
 
-function getOpenID(code, secret) {
+function getOpenID(code, appid, secret) {
   const url = 'https://api.weixin.qq.com/sns/jscode2session?' +
     querystring.encode({
-      appid: 'wxe23cbe40231fcfe5',
+      appid,
       secret,
       js_code: code,
       grant_type: 'authorization_code'
@@ -35,16 +35,20 @@ function isValidStr (str) {
  * 2 传入参数错误
  */
 exports.main = async (event, context) => {
-  let { code, secret } = event
-  if (!isValidStr(code) || !isValidStr(secret)) {
+  let { code, secret , appid } = event
+  if (
+    !isValidStr(code) || 
+    !isValidStr(secret) ||
+    !isValidStr(appid)
+  ) {
     return {
       code: 2,
-      msg: '传入的 code / secret参数不合法'
+      msg: '传入的 code/secret/appid 不合法'
     }
   }
 
   try {
-    const res = await getOpenID(code, secret)
+    const res = await getOpenID(code, appid ,secret)
     if (res.openid) {
       return {
         code: 0,

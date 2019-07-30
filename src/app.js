@@ -1,6 +1,4 @@
-const { subscriber } = require('./shared/util.js')
 const { appSecret , appId , env } = require('./config.js')
-
 
 //app.js
 App({
@@ -87,22 +85,11 @@ App({
         title: '用户登录过',
         duration: 2000
       })
-      subscriber.trigger('refresh-userinfo')
     } else {
       wx.navigateTo({
         url: '/pages/auth/auth',
       })
     }
-
-    // wx.getSetting({
-    //   success(res) {
-    //     if (res.authSetting['scope.userInfo']) {
-    //       wx.authorize({
-    //         scope: 'scope.userInfo',
-    //         success: wxGetUserInfo
-    //       })
-    //     }
-    //   }
-    // })
+    
   }
 })

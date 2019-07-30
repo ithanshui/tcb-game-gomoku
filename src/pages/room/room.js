@@ -3,6 +3,7 @@ const {
   encodeArray,
   decodeArray,
   diffArray,
+  isNewerArray,
 } = require('./../../shared/util.js')
 
 const { db } = require('./../../shared/database.js')
@@ -73,11 +74,8 @@ Page({
 
   onUnload: function () {
     const { interval, finished, roomid } = this.data
-    // 不加分号，这里会有编译bug
-    // 会被编译成 interval && clearInterval(interval)(!finished) && this.forceLogScore(false)
-    // BUG单地址：https://developers.weixin.qq.com/community/develop/doc/000082047e81e03815e8c500551c00?fromCreate=1
     interval && clearInterval(interval);
-    (!finished) && this.forceLogScore(false)
+    (!finished) && this.forceLogScore(false);
     wx.cloud.callFunction({
       name: 'clear_room',
       data: {
@@ -170,7 +168,7 @@ Page({
           console.error(error)
           clearInterval(interval)
         })
-    }, 5000)
+    }, 2000)
   },
 
   /**
@@ -195,12 +193,12 @@ Page({
             })
             return
           }
-          // 和本机的棋盘状态进行比较
-          if (encodeArray(chessmen) === data[0].chessmen) {
-            return 
-          }
           // 远程棋盘发生更新, 本地绘制棋子
           const decoded = decodeArray(data[0].chessmen, [lines, lines])
+          // 如果棋盘没有更新，或者状态是历史状态
+          if (!isNewerArray(chessmen, decoded, [lines, lines])) {
+            return
+          }
           const [x, y] = diffArray(decoded, chessmen, [lines, lines])
           console.log('远程更新的坐标(x, y):', x, y, '; 玩家颜色: ', decoded[x][y] === 1 ? 'black' : 'white')
           drawer.circle(x, y, decoded[x][y] === 1 ? 'black' : 'white')
@@ -222,7 +220,7 @@ Page({
             chessmen: decoded
           })
         })
-    }, 10000)
+    }, 2000)
 
     this.setData({
       interval

@@ -24,30 +24,7 @@ Page({
   onShow: function () {
     this.getUserScore()
     this.getRankScores()
-    // 单独开发此页面需要打开，开发环境网络并不稳定
-    // TODO：结合生命周期实现更兼容的方法
-    // subscriber.listen('refresh-userinfo', this.refreshUserInfo)
   },
-
-  // 单独开发此页面需要打开，开发环境网络并不稳定
-  // TODO：结合生命周期实现更兼容的方法
-  // onHide: function () {
-  //   subscriber.remove('refresh-userinfo', this.refreshUserInfo)
-  // },
-  // onUnload: function () {
-  //   subscriber.remove('refresh-userinfo', this.refreshUserInfo)
-  // },
-  // /**
-  //  * 监听 + 响应：全局拉取用户信息
-  //  */
-  // refreshUserInfo: function () {
-  //   this.setData({
-  //     nickName: app.globalData.user.nickName,
-  //     avatarUrl: app.globalData.user.avatarUrl
-  //   })
-  //   this.getUserScore()
-  //   this.getRankScores()
-  // },
 
   /**
    * 获取用户的胜负信息

@@ -1,1 +1,15 @@
 /* src/pages/auth/auth.wxss */
+
+button {
+  outline: none;
+  border: none;
+  background: #44b549;
+  color: #fff;
+  display: inline-block;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.2em;
+  padding: 15px 25px;
+}

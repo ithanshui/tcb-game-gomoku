@@ -8,10 +8,16 @@
     <text>游戏大厅</text>
   </view>
   <view 
-    class="component-toolbar-item component-toolbar-item_right" 
+    class="component-toolbar-item" 
     bindtap="toggleRoute" 
     data-url="/pages/rank/rank"
   >
     <text>排行榜</text>
+  </view>
+  <view
+    class="component-toolbar-item component-toolbar-item_right"
+    bindtap="copyGithub"
+  >
+    源码仓库
   </view>
 </view>

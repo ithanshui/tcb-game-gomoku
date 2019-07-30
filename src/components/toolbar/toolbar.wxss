@@ -15,7 +15,7 @@
 
 .component-toolbar-item {
   text-align: center;
-  width: calc(50vw - 2px);
+  width: calc(33vw - 2px);
 }
 
 .component-toolbar-item_left {

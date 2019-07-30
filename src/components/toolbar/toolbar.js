@@ -31,6 +31,18 @@ Component({
           url: dataset.url,
         })
       }
+    },
+    copyGithub: function () {
+      wx.setClipboardData({
+        data: 'https://github.com/TencentCloudBase/tcb-game-gomoku/',
+        success: function () {
+          wx.showToast({
+            title: '地址复制成功',
+            icon: 'success',
+            duration: 2000
+          })
+        }
+      })
     }
   }
 })

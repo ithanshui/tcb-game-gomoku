@@ -27,6 +27,17 @@ Page({
   },
 
   /**
+   * 本页面可分享
+   */
+  onShareAppMessage: function () {
+    return {
+      title: 'CloudBase 五子棋',
+      desc: '云开发/小程序/游戏开发的深度实践',
+      path: '/index/index'
+    }
+  },
+
+  /**
    * 获取用户的胜负信息
    */
   getUserScore: function () {

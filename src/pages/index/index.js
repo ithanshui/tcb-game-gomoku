@@ -23,6 +23,17 @@ Page({
   },
 
   /**
+   * 本页面可分享
+   */
+  onShareAppMessage: function () {
+    return {
+      title: 'CloudBase 五子棋',
+      desc: '云开发/小程序/游戏开发的深度实践',
+      path: '/index/index'
+    }
+  },
+
+  /**
    * 检测房间号是否存在
    * 用途：创建房间时，避免创建重复房间
    */

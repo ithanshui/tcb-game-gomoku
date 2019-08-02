@@ -42,12 +42,6 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: async function () {
-    // 识别玩家身份
-    const identity = await this.judgeIdentity()
-    if (!identity) {
-      console.log('玩家身份无法标识')
-      return 
-    }
     // 初始化棋盘数据
     const { lines } = this.data
     const chessmen = new Array(lines)
@@ -62,6 +56,12 @@ Page({
     const drawer = new Drawer(ctx)
     drawer.background()
     drawer.lines(lines)
+    // 识别玩家身份
+    const identity = await this.judgeIdentity()
+    if (!identity) {
+      console.log('玩家身份无法标识')
+      return 
+    }
     // 更新数据
     const that = this
     this.setData({
@@ -283,8 +283,8 @@ Page({
         const offsetX = x - left,
           offsetY = y - top
 
-        let col = Math.floor((offsetX - 10) / 20),
-          row = Math.floor((offsetY - 10) / 20)
+        let col = Math.round((offsetX - 10) / 20),
+          row = Math.round((offsetY - 10) / 20)
 
         console.log(col, row)
         col = col < 0 ? 0 : col

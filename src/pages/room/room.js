@@ -168,7 +168,7 @@ Page({
           console.error(error)
           clearInterval(interval)
         })
-    }, 1000)
+    }, 500)
   },
 
   /**
@@ -220,7 +220,7 @@ Page({
             chessmen: decoded
           })
         })
-    }, 1000)
+    }, 500)
 
     this.setData({
       interval

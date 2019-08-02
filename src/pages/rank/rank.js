@@ -33,7 +33,7 @@ Page({
     return {
       title: 'CloudBase 五子棋',
       desc: '云开发/小程序/游戏开发的深度实践',
-      path: '/index/index'
+      path: 'pages/index/index'
     }
   },
 

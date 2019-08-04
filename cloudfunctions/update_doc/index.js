@@ -9,14 +9,22 @@ exports.main = async (event, context) => {
   let { collection, docid, data } = event
 
   try {
-    await db.collection(collection)
+    const res = await db.collection(collection)
       .doc(docid)
       .update({
         ...data
       })
-    return {
-      code: 0,
-      msg: 'success'
+    // 有错误码
+    if (res.code) {
+      return {
+        code: 1,
+        msg: res.message
+      }
+    } else {
+      return {
+        code: 0,
+        msg: 'success'
+      }
     }
   } catch (error) {
     console.log(error.message)

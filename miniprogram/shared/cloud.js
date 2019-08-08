@@ -10,3 +10,5 @@ if (!loaded) {
 }
 
 export const db = wx.cloud.database()
+
+export const $ = db.command.aggregate

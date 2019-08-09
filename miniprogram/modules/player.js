@@ -1,18 +1,15 @@
+import main from './main.js'
 import chessmen from './chessmen.js'
-
 import { 
   db, 
   $ 
 } from './../shared/cloud.js'
-
 import { 
   genRandomNumber, 
   encodeArray, 
   decodeArray, 
-  diffArray, 
-  isNewerArray 
+  diffArray
 } from './../shared/util.js'
-
 import { 
   CHESS_BLACK_NUM, 
   CHESS_WHITE_NUM, 
@@ -49,6 +46,7 @@ class Player {
     }
 
     const identity = await this.judgeIdentity()
+    console.log('identity is', identity)
 
     wx.onTouchStart((event) => this.handleTouch(event))
 
@@ -139,6 +137,7 @@ class Player {
     }
     
     this.log[row][col] = this.color === CHESS_BLACK_COLOR ? CHESS_BLACK_NUM : CHESS_WHITE_NUM
+    main.render()
     console.log('触摸后，更新本地棋盘', row, col, this.log[row][col])
 
     try {
@@ -214,6 +213,7 @@ class Player {
             this.log[x][y] = decoded[x][y]
             console.log(x, y, decoded, this.log)
             chessmen._putDown(x, y, decoded[x][y] === CHESS_BLACK_NUM ? CHESS_BLACK_COLOR : CHESS_WHITE_COLOR)
+            main.render()
             this.canRun = true
           },
 
@@ -222,5 +222,4 @@ class Player {
   }
 }
 
-const player = new Player()
-export default player
+export default new Player()

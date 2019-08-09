@@ -1,6 +1,7 @@
 import background from './background.js'
 import head from './head.js'
 import chessmen from './chessmen.js'
+import './player.js'
 import { getWindowRectSync } from './../shared/util.js'
 import { screenCtx } from './../shared/canvas.js'
 

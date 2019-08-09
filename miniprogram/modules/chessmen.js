@@ -2,6 +2,8 @@ import canvas from './../shared/canvas.js'
 import { getWindowRect, getWindowRectSync } from './../shared/util.js'
 import { HEAD_COLOR } from './../shared/contants.js'
 
+const winContext = canvas.getContext('2d')
+
 class Chessmen {
   constructor(winWidth, winHeight) {
     this.x = 0.05 * winWidth
@@ -27,28 +29,34 @@ class Chessmen {
 
     this.titleCanvas = wx.createCanvas()
     this.mainCanvas = wx.createCanvas()
+    this.titleContext = this.titleCanvas.getContext('2d')
+    this.mainContext = this.mainCanvas.getContext('2d')
   }
 
   drawTitle(title) {
-    const ctx = this.titleCanvas.getContext('2d')
+    // const ctx = this.titleCanvas.getContext('2d')
+    const ctx = this.titleContext
     ctx.fillStyle = 'white'
     ctx.fillRect(0, 0, this.width, this.titleHeight)
 
-    const ctx2 = this.titleCanvas.getContext('2d')
+    // const ctx2 = this.titleCanvas.getContext('2d')
+    const ctx2 = this.titleContext
     ctx2.fillStyle = 'white'
     ctx2.textAlign = 'center'
     ctx2.font = "18px Arial"
     ctx2.fillStyle = 'black'
-    ctx2.fillText('⌛️ 等待对手 ⌛️', this.width * 0.5, this.titleHeight * 0.5)
+    ctx2.fillText('等待对手', this.width * 0.5, this.titleHeight * 0.5)
   }
   
   drawMain(num = 15) {
-    const ctx = this.mainCanvas.getContext('2d')
+    // const ctx = this.mainCanvas.getContext('2d')
+    const ctx = this.mainContext
     ctx.fillStyle = 'green'
     ctx.fillRect(0, 0, this.width, this.mainHeight)
 
     // 绘制棋盘背景
-    const ctx1 = this.mainCanvas.getContext('2d')
+    // const ctx1 = this.mainCanvas.getContext('2d')
+    const ctx1 = this.mainContext
     const width = num * 20,
       height = num * 20
     
@@ -59,7 +67,8 @@ class Chessmen {
     ctx1.fillRect(this.chessmenOffX, this.chessmenOffY, width, height)
 
     // 绘制棋盘线条 
-    const ctx2 = this.mainCanvas.getContext('2d')
+    // const ctx2 = this.mainCanvas.getContext('2d')
+    const ctx2 = this.mainContext
 
     for (let i = 0; i < num; ++i) {
       // 水平线条
@@ -93,13 +102,15 @@ class Chessmen {
     const circleX = this.chessmenPadding + this.chessmenOffX + col * 20
     const R = 8
 
-    const ctx = this.mainCanvas.getContext('2d')
+    // const ctx = this.mainCanvas.getContext('2d')
+    const ctx = this.mainContext
     ctx.beginPath()
     ctx.arc(circleX, circleY, 8, 0, 2 * Math.PI, false)
     ctx.fillStyle = color || 'black'
     ctx.fill()
 
-    const ctx2 = canvas.getContext('2d')
+    // const ctx2 = canvas.getContext('2d')
+    const ctx2 = winContext
     ctx2.drawImage(
       this.mainCanvas,
       0, 0, this.width, this.mainHeight,
@@ -133,7 +144,8 @@ class Chessmen {
     this.drawTitle()
     this.drawMain(15)
     
-    const ctx = canvas.getContext('2d')
+    // const ctx = canvas.getContext('2d')
+    const ctx = winContext
     ctx.drawImage(
       this.titleCanvas, 
       0, 0, this.width, this.titleHeight, 

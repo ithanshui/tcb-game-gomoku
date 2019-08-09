@@ -1,11 +1,18 @@
-import canvas from './../shared/canvas.js'
-import { getWindowRect } from './../shared/util.js'
+import { screenCtx } from './../shared/canvas.js'
+import { getWindowRectSync } from './../shared/util.js'
 import { BG_COLOR } from './../shared/contants.js'
 
-export default async function drawBackground() {
-  const { winWidth, winHeight } = await getWindowRect()
-  
-  const context = canvas.getContext('2d')
-  context.fillStyle = BG_COLOR
-  context.fillRect(0, 0, winWidth, winHeight)
+class Background {
+  constructor() {
+    const { winWidth, winHeight } = getWindowRectSync()
+    this.width = winWidth
+    this.height = winHeight
+  }
+
+  render() {
+    screenCtx.fillStyle = BG_COLOR
+    screenCtx.fillRect(0, 0, this.width, this.height)
+  }
 }
+
+export default new Background()

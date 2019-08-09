@@ -55,22 +55,9 @@ class Player {
     if (identity === 'owner') {
       this.waitPlayerJoinGame()
     } else {
+      await this.updatePeopleField()
       this.listenRemoteRefresh()
     }
-    // 
-    // db.collection(COLLECTION)
-    //   .where({
-    //     _id: this.docid
-    //   })
-    //   .watch({
-    //     onChange: snapshot => {
-    //       console.log('收到快照', snapshot)
-    //     },
-    //     onError: error => {
-    //       console.log('收到error', error)
-    //     }
-    //   })
-
   }
 
   async judgeIdentity() {
@@ -114,12 +101,26 @@ class Player {
       createTimestamp: Date.now().toString(),
       people: 1
     }
-    const res = await db.collection(COLLECTION).add({ data: room })
 
+    const res = await db.collection(COLLECTION).add({ data: room })
+    
     return {
       ...room,
       _id: res._id
     }
+  }
+
+  async updatePeopleField() {
+    await wx.cloud.callFunction({
+      name: 'updateDoc',
+      data: {
+        collection: COLLECTION,
+        docid: this.docid,
+        data: {
+          people: 2
+        }
+      }
+    })
   }
 
   async handleTouch(event) {
@@ -169,7 +170,7 @@ class Player {
         .watch({
           onChange: snapshot => {
             const { docs, docChanges } = snapshot
-            console.log('waitPlayerJoinGame update')
+            console.log('waitPlayerGame', snapshot)
             if (docChanges[0].dataType === 'update' && docs[0].people === 2) {
               this.canRun = true
               this.watcher.player.close()

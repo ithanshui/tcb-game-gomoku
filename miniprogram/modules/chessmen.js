@@ -17,10 +17,10 @@ class Chessmen {
     this.width = 0.9 * winWidth
     this.height = 0.8 * winHeight
 
-    this.titleHeight = 0.3 * this.height
-    this.mainHeight = 0.7 * this.height
+    this.titleHeight = 0.2 * this.height
+    this.mainHeight = 0.8 * this.height
 
-    this.title = '等待对手中'
+    this.title = '等待玩家加入'
 
     // 棋盘在其上canvas的偏移量
     this.chessmenOffX = 0
@@ -41,11 +41,15 @@ class Chessmen {
     this.mainCtx = this.mainCanvas.getContext('2d')
   }
 
+  updateTitle(title) {
+    this.title = title
+  }
+
   drawTitle() {
     const { titleCtx } = this
     
     // 绘制棋盘上方颜色
-    titleCtx.fillStyle = 'white'
+    titleCtx.fillStyle = '#fffbe6'
     titleCtx.fillRect(0, 0, this.width, this.titleHeight)
 
     // 绘制棋盘上方字体
@@ -58,7 +62,7 @@ class Chessmen {
   
   drawMain(num = 15) {
     const { mainCtx } = this
-    mainCtx.fillStyle = 'green'
+    mainCtx.fillStyle = '#ffe58f'
     mainCtx.fillRect(0, 0, this.width, this.mainHeight)
 
     // 绘制棋盘背景
@@ -68,7 +72,7 @@ class Chessmen {
     this.chessmenOffX = (this.width - width) / 2
     this.chessmenOffY = (this.mainHeight - height) / 2
 
-    mainCtx.fillStyle = '#ffc53d'
+    mainCtx.fillStyle = '#faad14'
     mainCtx.fillRect(this.chessmenOffX, this.chessmenOffY, width, height)
 
     // 绘制棋盘线条 

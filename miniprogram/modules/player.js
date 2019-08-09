@@ -1,5 +1,6 @@
 import main from './main.js'
 import chessmen from './chessmen.js'
+import head from './head.js'
 import { 
   db, 
   $ 
@@ -79,6 +80,9 @@ class Player {
     this.docid = room._id
     this.canRun = false
 
+    head.updateText(`房间号 ${this.roomid}`)
+    main.render()
+
     return rooms.length ? 'player' : 'owner'
   }
 
@@ -137,6 +141,7 @@ class Player {
     }
     
     this.log[row][col] = this.color === CHESS_BLACK_COLOR ? CHESS_BLACK_NUM : CHESS_WHITE_NUM
+    chessmen.updateTitle('等待对手下棋')
     main.render()
     console.log('触摸后，更新本地棋盘', row, col, this.log[row][col])
 
@@ -172,9 +177,10 @@ class Player {
             console.log('waitPlayerGame', snapshot)
             if (docChanges[0].dataType === 'update' && docs[0].people === 2) {
               this.canRun = true
+              chessmen.updateTitle('轮到你下棋')
+              main.render()
               this.watcher.player.close()
               this.listenRemoteRefresh()
-              console.log('玩家进入, 关闭player监听')
             }
           },
           onError: error => {}
@@ -213,6 +219,7 @@ class Player {
             this.log[x][y] = decoded[x][y]
             console.log(x, y, decoded, this.log)
             chessmen._putDown(x, y, decoded[x][y] === CHESS_BLACK_NUM ? CHESS_BLACK_COLOR : CHESS_WHITE_COLOR)
+            chessmen.updateTitle('轮到你下棋')
             main.render()
             this.canRun = true
           },

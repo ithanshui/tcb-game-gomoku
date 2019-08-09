@@ -1,11 +1,17 @@
-import canvas from './../shared/canvas.js'
-import { getWindowRect, getWindowRectSync } from './../shared/util.js'
-import { HEAD_COLOR } from './../shared/contants.js'
-
-const winContext = canvas.getContext('2d')
+import { screenCtx } from './../shared/canvas.js'
+import { getWindowRectSync } from './../shared/util.js'
+import {
+  CHESS_BLACK_NUM,
+  CHESS_WHITE_NUM,
+  CHESS_EMPTY_NUM,
+  CHESS_BLACK_COLOR,
+  CHESS_WHITE_COLOR
+} from './../shared/contants.js'
 
 class Chessmen {
-  constructor(winWidth, winHeight) {
+  constructor() {
+    const { winWidth, winHeight } = getWindowRectSync()
+
     this.x = 0.05 * winWidth
     this.y = 0.15 * winHeight
     this.width = 0.9 * winWidth
@@ -13,6 +19,8 @@ class Chessmen {
 
     this.titleHeight = 0.3 * this.height
     this.mainHeight = 0.7 * this.height
+
+    this.title = '等待对手中'
 
     // 棋盘在其上canvas的偏移量
     this.chessmenOffX = 0
@@ -23,105 +31,107 @@ class Chessmen {
     for (let i = 0; i < 15; ++i) {
       this.chessmenLog[i] = []
       for (let j = 0; j < 15; ++j) {
-        this.chessmenLog[i][j] = 0
+        this.chessmenLog[i][j] = CHESS_EMPTY_NUM
       }
     }
 
     this.titleCanvas = wx.createCanvas()
     this.mainCanvas = wx.createCanvas()
-    this.titleContext = this.titleCanvas.getContext('2d')
-    this.mainContext = this.mainCanvas.getContext('2d')
+    this.titleCtx = this.titleCanvas.getContext('2d')
+    this.mainCtx = this.mainCanvas.getContext('2d')
   }
 
-  drawTitle(title) {
-    // const ctx = this.titleCanvas.getContext('2d')
-    const ctx = this.titleContext
-    ctx.fillStyle = 'white'
-    ctx.fillRect(0, 0, this.width, this.titleHeight)
+  drawTitle() {
+    const { titleCtx } = this
+    
+    // 绘制棋盘上方颜色
+    titleCtx.fillStyle = 'white'
+    titleCtx.fillRect(0, 0, this.width, this.titleHeight)
 
-    // const ctx2 = this.titleCanvas.getContext('2d')
-    const ctx2 = this.titleContext
-    ctx2.fillStyle = 'white'
-    ctx2.textAlign = 'center'
-    ctx2.font = "18px Arial"
-    ctx2.fillStyle = 'black'
-    ctx2.fillText('等待对手', this.width * 0.5, this.titleHeight * 0.5)
+    // 绘制棋盘上方字体
+    titleCtx.fillStyle = 'white'
+    titleCtx.textAlign = 'center'
+    titleCtx.font = "18px Arial"
+    titleCtx.fillStyle = 'black'
+    titleCtx.fillText(this.title, this.width * 0.5, this.titleHeight * 0.5)
   }
   
   drawMain(num = 15) {
-    // const ctx = this.mainCanvas.getContext('2d')
-    const ctx = this.mainContext
-    ctx.fillStyle = 'green'
-    ctx.fillRect(0, 0, this.width, this.mainHeight)
+    const { mainCtx } = this
+    mainCtx.fillStyle = 'green'
+    mainCtx.fillRect(0, 0, this.width, this.mainHeight)
 
     // 绘制棋盘背景
-    // const ctx1 = this.mainCanvas.getContext('2d')
-    const ctx1 = this.mainContext
     const width = num * 20,
       height = num * 20
     
     this.chessmenOffX = (this.width - width) / 2
     this.chessmenOffY = (this.mainHeight - height) / 2
 
-    ctx1.fillStyle = '#ffc53d'
-    ctx1.fillRect(this.chessmenOffX, this.chessmenOffY, width, height)
+    mainCtx.fillStyle = '#ffc53d'
+    mainCtx.fillRect(this.chessmenOffX, this.chessmenOffY, width, height)
 
     // 绘制棋盘线条 
-    // const ctx2 = this.mainCanvas.getContext('2d')
-    const ctx2 = this.mainContext
-
+    mainCtx.strokeStyle = 'black'
     for (let i = 0; i < num; ++i) {
       // 水平线条
-      ctx2.moveTo(this.chessmenPadding + this.chessmenOffX, this.chessmenOffY + this.chessmenPadding + i * 20)
-      ctx2.lineTo(this.chessmenOffX + 290, this.chessmenOffY + this.chessmenPadding + i * 20)
-      ctx2.stroke()
+      mainCtx.moveTo(this.chessmenPadding + this.chessmenOffX, this.chessmenOffY + this.chessmenPadding + i * 20)
+      mainCtx.lineTo(this.chessmenOffX + 290, this.chessmenOffY + this.chessmenPadding + i * 20)
+      mainCtx.stroke()
       
       // 垂直线条
-      ctx2.moveTo(this.chessmenPadding + i * 20 + this.chessmenOffX, this.chessmenPadding + this.chessmenOffY)
-      ctx2.lineTo(this.chessmenPadding + i * 20 + this.chessmenOffX, this.chessmenOffY + 290)
-      ctx2.stroke()
+      mainCtx.moveTo(this.chessmenPadding + i * 20 + this.chessmenOffX, this.chessmenPadding + this.chessmenOffY)
+      mainCtx.lineTo(this.chessmenPadding + i * 20 + this.chessmenOffX, this.chessmenOffY + 290)
+      mainCtx.stroke()
+    }
+  }
+
+  drawChess() {
+    const R = 8
+    const { mainCtx } = this
+
+    for (let row = 0; row < 15; ++row) {
+      for (let col = 0; col < 15; ++col) {
+        if (this.chessmenLog[row][col] === CHESS_EMPTY_NUM) {
+          continue
+        }
+
+        const color = this.chessmenLog[row][col] === CHESS_BLACK_NUM ? CHESS_BLACK_COLOR : CHESS_WHITE_COLOR
+        const circleY = this.chessmenPadding + this.chessmenOffY + row * 20
+        const circleX = this.chessmenPadding + this.chessmenOffX + col * 20
+
+        mainCtx.beginPath()
+        mainCtx.arc(circleX, circleY, R, 0, 2 * Math.PI)
+        mainCtx.fillStyle = color
+        mainCtx.fill()
+      }
     }
   }
 
   _putDown(row, col, color) {
+    if (color !== CHESS_BLACK_COLOR && color !== CHESS_WHITE_COLOR) {
+      return {
+        success: false
+      }
+    }
+
     if (col < 0 || col > 14 || row < 0 || row > 14) {
       return {
         success: false
       }
     }
 
-    if (this.chessmenLog[col][row] === 1) {
+    if (this.chessmenLog[row][col] !== CHESS_EMPTY_NUM) {
       return {
         success: false
       }
     } else {
-      this.chessmenLog[col][row] = 1
+      this.chessmenLog[row][col] = color === CHESS_BLACK_COLOR ? CHESS_BLACK_NUM : CHESS_WHITE_NUM
     }
 
-    const circleY = this.chessmenPadding + this.chessmenOffY + row * 20
-    const circleX = this.chessmenPadding + this.chessmenOffX + col * 20
-    const R = 8
+    this.chessmenLog[row][col] = color === CHESS_BLACK_COLOR ? CHESS_BLACK_NUM : CHESS_WHITE_NUM
 
-    // const ctx = this.mainCanvas.getContext('2d')
-    const ctx = this.mainContext
-    ctx.beginPath()
-    ctx.arc(circleX, circleY, 8, 0, 2 * Math.PI, false)
-    ctx.fillStyle = color || 'black'
-    ctx.fill()
-
-    // const ctx2 = canvas.getContext('2d')
-    const ctx2 = winContext
-    ctx2.drawImage(
-      this.mainCanvas,
-      0, 0, this.width, this.mainHeight,
-      this.x, this.y + this.titleHeight, this.width, this.mainHeight
-    )
-
-    return {
-      success: true,
-      col,
-      row
-    }
+    return { col, row, success: true }
   }
 
   putDown(_x, _y, color) {
@@ -140,18 +150,18 @@ class Chessmen {
     return this._putDown(row, col, color)
   }
 
-  draw() {
+  render() {
     this.drawTitle()
-    this.drawMain(15)
-    
-    // const ctx = canvas.getContext('2d')
-    const ctx = winContext
-    ctx.drawImage(
+    this.drawMain()
+    this.drawChess()
+
+    screenCtx.drawImage(
       this.titleCanvas, 
       0, 0, this.width, this.titleHeight, 
       this.x, this.y, this.width, this.titleHeight
     )
-    ctx.drawImage(
+
+    screenCtx.drawImage(
       this.mainCanvas, 
       0, 0, this.width, this.mainHeight, 
       this.x, this.y + this.titleHeight, this.width, this.mainHeight
@@ -159,7 +169,4 @@ class Chessmen {
   }
 }
 
-const { winWidth, winHeight } = getWindowRectSync()
-const chessmen = new Chessmen(winWidth, winHeight)
-
-export default chessmen
+export default new Chessmen()

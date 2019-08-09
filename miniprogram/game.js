@@ -1,2 +1,2 @@
-import './sdk/cloudsdk.js'
+import './sdk/cloudsdk.beta.js'
 import './modules/main'

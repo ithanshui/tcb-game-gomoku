@@ -11,4 +11,3 @@ export const CHESS_WHITE_NUM = -1
 export const CHESS_WHITE_COLOR = 'white'
 
 export const CHESS_EMPTY_NUM = 0
-

@@ -1,10 +1,7 @@
 import main from './main.js'
 import chessmen from './chessmen.js'
 import head from './head.js'
-import { 
-  db, 
-  $ 
-} from './../shared/cloud.js'
+import { db, $ } from './../shared/cloud.js'
 import { 
   genRandomNumber, 
   encodeArray, 

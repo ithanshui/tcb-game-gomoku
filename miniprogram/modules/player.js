@@ -54,6 +54,8 @@ class Player {
     if (identity === 'owner') {
       this.waitPlayerJoinGame()
     } else {
+      chessmen.updateTitle('等待对手下棋')
+      main.render()
       await this.updatePeopleField()
       this.listenRemoteRefresh()
     }
@@ -145,6 +147,11 @@ class Player {
     main.render()
     console.log('触摸后，更新本地棋盘', row, col, this.log[row][col])
 
+    const canJudge = this.judgeWinOrLose(row, col, this.log)
+    if (canJudge) {
+      this.exit(row, col, this.log)
+    }
+
     try {
       const res = await wx.cloud.callFunction({
         name: 'updateDoc',
@@ -162,7 +169,6 @@ class Player {
     } catch (error) {
       console.log('触摸后，更新远程棋盘 失败')
     }
-    // todo: 判断输赢
   }
 
   waitPlayerJoinGame() {
@@ -213,19 +219,127 @@ class Player {
             } 
 
             const shape = [this.lines, this.lines]
-            console.log('shape is', shape)
             const decoded = decodeArray(doc.chessmen, shape)
             const [x, y] = diffArray(decoded, this.log, shape)
             this.log[x][y] = decoded[x][y]
-            console.log(x, y, decoded, this.log)
+            const canJudge = this.judgeWinOrLose(x, y, this.log)
+
+            if (!canJudge) {
+              chessmen.updateTitle('轮到你下棋')
+              this.canRun = true
+            } 
             chessmen._putDown(x, y, decoded[x][y] === CHESS_BLACK_NUM ? CHESS_BLACK_COLOR : CHESS_WHITE_COLOR)
-            chessmen.updateTitle('轮到你下棋')
             main.render()
-            this.canRun = true
+            if (canJudge) {
+              this.exit(x, y, this.log)
+            }
           },
 
           onError: error => {}
         })
+  }
+
+  judgeWinOrLose(x, y, log) {
+    if (!Array.isArray(log)) {
+      log = this.log
+    }
+    const { lines } = this
+    let num = 0, target = log[x][y]
+    if (target !== CHESS_BLACK_NUM && target !== CHESS_WHITE_NUM) {
+      return false
+    }
+
+    // 垂直方向
+    num = 0
+    for (let i = y - 1; i >= 0 && target === log[x][i]; --i) {
+      ++num
+    }
+    for (let i = y + 1; i < lines && target === log[x][i]; ++i) {
+      ++num
+    }
+    if (num >= 4) {
+      console.log('垂直方向，胜利')
+      return true
+    }
+
+    // 水平方向
+    num = 0
+    for (let i = x - 1; i >= 0 && target === log[i][y]; --i) {
+      ++num
+    }
+    for (let i = x + 1; i < lines && target === log[i][y]; ++i) {
+      ++num
+    }
+    if (num >= 4) {
+      console.log('水平方向，胜利')
+      return true
+    }
+
+    // 左倾斜方向
+    num = 0
+    for (
+      let i = x - 1, j = y - 1;
+      i >= 0 && j >= 0 && target === log[i][j];
+      --i, --j
+    ) {
+      ++num
+    }
+    for (
+      let i = x + 1, j = y + 1;
+      i < lines && j < lines && target === log[i][j];
+      ++i, ++j
+    ) {
+      ++num
+    }
+    if (num >= 4) {
+      console.log('左倾斜方向，胜利')
+      return true
+    }
+
+    // 右倾斜方向
+    num = 0
+    for (
+      let i = x - 1, j = y + 1;
+      i >= 0 && j < lines && target === log[i][j];
+      --i, ++j
+    ) {
+      ++num
+    }
+    for (
+      let i = x + 1, j = y - 1;
+      i < lines && j >= 0 && target === log[i][j];
+      ++i, --j
+    ) {
+      ++num
+    }
+    if (num >= 4) {
+      console.log('右倾斜方向，胜利')
+      return true
+    }
+
+    return false
+  }
+  
+  exit(row, col) {
+    this.watcher.remote.close()
+    this.canRun = false
+
+    const target = this.log[row][col]
+    const color = target === CHESS_BLACK_NUM 
+      ? CHESS_BLACK_COLOR
+      : CHESS_WHITE_COLOR
+    const map = {
+      [CHESS_BLACK_COLOR]: '黑棋',
+      [CHESS_WHITE_COLOR]: '白棋'
+    }
+
+    if (color === this.color) {
+      chessmen.updateTitle(`恭喜, ${map[this.color]}胜利`)
+    } else {
+      chessmen.updateTitle(`可惜, ${map[this.color]}失败`)
+    }
+
+    main.render()
   }
 }
 

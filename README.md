@@ -6,7 +6,7 @@
 ## 小游戏 VS 小程序
 
 - **小游戏版**
-- [小程序版](https://github.com/dongyuanxin/game-test/tree/miniprogram)
+- [小程序版](https://github.com/TencentCloudBase/tcb-game-gomoku/tree/miniprogram)
 
 ⚠️ 两个版本的代码完全不同，一把辛酸泪......
 

@@ -3,15 +3,12 @@ import config from './config.js'
 let loaded = false
 
 if (!loaded) {
-  wx.cloud.init({
-    env: config.env
-  })
-  loaded = true
+  // 任务
 }
 
-export const db = wx.cloud.database()
+export const db = null // 任务
 
-export const $ = db.command.aggregate
+export const $ = null // 任务
 
 export function getTempFileURL(fileList) {
   if (!Array.isArray(fileList)) {
@@ -19,21 +16,7 @@ export function getTempFileURL(fileList) {
   }
 
   const promise = new Promise((resolve) => {
-    wx.cloud.getTempFileURL({
-      fileList,
-      success: res => {
-        const { fileList } = res
-        if (Array.isArray(fileList) && fileList.length) {
-          resolve(fileList[0].tempFileURL)
-        } else {
-          resolve()
-        }
-      },
-      fail: error => {
-        console.error(error)
-        resolve()
-      }
-    })
+    // 任务
   })
 
   return promise

@@ -60,16 +60,7 @@ class Player {
   }
 
   async judgeIdentity() {
-    const { list: rooms } = await db.collection(COLLECTION)
-      .aggregate()
-      .match({
-        people: $.eq(1)
-      })
-      .sort({
-        createTimestamp: -1
-      })
-      .limit(1)
-      .end()
+    // 任务
 
     let room = null
     if (!rooms.length) {
@@ -90,42 +81,11 @@ class Player {
   }
 
   async createEmptyRoom() {
-    const roomid = genRandomNumber(6)
-    const { data } = await db.collection(COLLECTION)
-      .where({ roomid })
-      .get()
-    if (data.length) {
-      await this.createEmptyRoom()
-      return
-    }
-
-    let room = {
-      roomid,
-      nextcolor: 'black',
-      chessmen: encodeArray(this.log),
-      createTimestamp: Date.now().toString(),
-      people: 1
-    }
-
-    const res = await db.collection(COLLECTION).add({ data: room })
-    
-    return {
-      ...room,
-      _id: res._id
-    }
+    // 任务
   }
 
   async updatePeopleField() {
-    await wx.cloud.callFunction({
-      name: 'updateDoc',
-      data: {
-        collection: COLLECTION,
-        docid: this.docid,
-        data: {
-          people: 2
-        }
-      }
-    })
+    // 任务
   }
 
   async handleTouch(event) {
@@ -153,45 +113,11 @@ class Player {
       this.exit(row, col, this.log)
     }
 
-    try {
-      const res = await wx.cloud.callFunction({
-        name: 'updateDoc',
-        data: {
-          collection: COLLECTION,
-          docid: this.docid,
-          data: {
-            chessmen: encodeArray(this.log),
-            nextcolor: this.color === CHESS_BLACK_COLOR ? CHESS_WHITE_COLOR : CHESS_BLACK_COLOR
-          }
-        }
-      })
-      console.log('云函数返回', res)
-      console.log('触摸后，更新远程棋盘')
-    } catch (error) {
-      console.log('触摸后，更新远程棋盘 失败')
-    }
+    // 任务
   }
 
   waitPlayerJoinGame() {
-    this.watcher.player = 
-      db.collection(COLLECTION)
-        .where({
-          _id: this.docid
-        })
-        .watch({
-          onChange: snapshot => {
-            const { docs, docChanges } = snapshot
-            console.log('waitPlayerGame', snapshot)
-            if (docChanges[0].dataType === 'update' && docs[0].people === 2) {
-              this.canRun = true
-              chessmen.updateTitle('轮到你下棋')
-              main.render()
-              this.watcher.player.close()
-              this.listenRemoteRefresh()
-            }
-          },
-          onError: error => {}
-        })
+    // 任务
   } 
 
   listenRemoteRefresh() {
@@ -202,40 +128,15 @@ class Player {
         })
         .watch({
           onChange: snapshot => {
+            // 任务：监听远程棋盘更新
             const docChange = snapshot.docChanges[0]
             const doc = snapshot.docs[0]
+            // 判定棋盘更新状态、以及更新字段是否是chessmen
 
-            if (
-              docChange.dataType !== 'update'
-              || !docChange.updatedFields
-              || !docChange.updatedFields.chessmen
-            ) {
-              console.log('不是chessmen字段更新')
-              return
-            }
-
-            if (doc.nextcolor !== this.color) {
-              console.log('不轮到你')
-              return
-            } 
-
-            const shape = [this.lines, this.lines]
-            const decoded = decodeArray(doc.chessmen, shape)
-            const [x, y] = diffArray(decoded, this.log, shape)
-            this.log[x][y] = decoded[x][y]
-            const canJudge = this.judgeWinOrLose(x, y, this.log)
-
-            if (!canJudge) {
-              chessmen.updateTitle('轮到你下棋')
-              this.canRun = true
-            } 
-            chessmen._putDown(x, y, decoded[x][y] === CHESS_BLACK_NUM ? CHESS_BLACK_COLOR : CHESS_WHITE_COLOR)
-            main.render()
-            if (canJudge) {
-              this.exit(x, y, this.log)
-            }
+            // 判定棋盘的nextcolor是否符合要求
+            
+            // 任务：更新本地棋盘状态、判定输赢、打开锁
           },
-
           onError: error => {}
         })
   }
@@ -334,25 +235,18 @@ class Player {
       [CHESS_WHITE_COLOR]: '白棋'
     }
 
-    if (color === this.color) {
-      chessmen.updateTitle(`恭喜, ${map[this.color]}胜利`)
-    } else {
-      chessmen.updateTitle(`可惜, ${map[this.color]}失败`)
-    }
-    main.render()
-    await sleep(2000)
+    // 任务：给予输赢提示
+
 
     chessmen.updateTitle('2秒后自动退出')
     main.render()
     await sleep(2000)
     
+    // 任务：删除记录
     const that = this
     wx.exitMiniProgram({
       complete: () => {
-        wx.cloud.callFunction({
-          name: 'clearRoom',
-          data: { roomid: that.roomid }
-        })
+        // 
       }
     })
   }

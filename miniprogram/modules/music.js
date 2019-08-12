@@ -11,25 +11,7 @@ class Music {
   }
 
   async init() {
-    Promise.all([
-      getTempFileURL(fallAudioID),
-      getTempFileURL(bgAudioID)
-    ])
-    .then(values => {
-      const [fallUrl, bgUrl] = values
-      if (bgUrl) {
-        this.bgAudio.autoplay = true
-        this.bgAudio.loop = true
-        this.bgAudio.volume = 0.2
-        this.bgAudio.src = bgUrl
-      }
-
-      if (fallUrl) {
-        this.fallAudio.autoplay = false
-        this.fallAudio.loop = false
-        this.fallAudio.src = fallUrl
-      }
-    })
+    // 任务
   }
 
   playFallAudio() {

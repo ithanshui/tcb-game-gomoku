@@ -158,3 +158,14 @@ export function isNewerArray(older, newer, shape) {
   }
   return newerNum > olderNum
 }
+
+/**
+ * AsyncFunction中进行睡眠
+ * 
+ * @param {Number} ms 睡眠时间
+ */
+export function sleep(ms) {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms)
+  })
+}

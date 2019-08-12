@@ -6,7 +6,8 @@ import {
   genRandomNumber, 
   encodeArray, 
   decodeArray, 
-  diffArray
+  diffArray,
+  sleep
 } from './../shared/util.js'
 import { 
   CHESS_BLACK_NUM, 
@@ -320,7 +321,7 @@ class Player {
     return false
   }
   
-  exit(row, col) {
+  async exit(row, col) {
     this.watcher.remote.close()
     this.canRun = false
 
@@ -338,8 +339,22 @@ class Player {
     } else {
       chessmen.updateTitle(`可惜, ${map[this.color]}失败`)
     }
-
     main.render()
+    await sleep(2000)
+
+    chessmen.updateTitle('2秒后自动退出')
+    main.render()
+    await sleep(2000)
+    
+    const that = this
+    wx.exitMiniProgram({
+      complete: () => {
+        wx.cloud.callFunction({
+          name: 'clearRoom',
+          data: { roomid: that.roomid }
+        })
+      }
+    })
   }
 }
 

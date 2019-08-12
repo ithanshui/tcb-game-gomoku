@@ -1,6 +1,7 @@
 import { getTempFileURL } from './../shared/cloud.js'
-const FALL_AUDIO_ID = 'cloud://wuziqi-9koeb.7775-wuziqi-9koeb-1259633363/fall.mp3'
-const BG_AUDIO_ID = 'cloud://wuziqi-9koeb.7775-wuziqi-9koeb-1259633363/bgm.mp3'
+import config from './../shared/config.js'
+
+const { fallAudioID, bgAudioID } = config.audio
 
 class Music {
   constructor() {
@@ -11,8 +12,8 @@ class Music {
 
   async init() {
     Promise.all([
-      getTempFileURL(FALL_AUDIO_ID),
-      getTempFileURL(BG_AUDIO_ID)
+      getTempFileURL(fallAudioID),
+      getTempFileURL(bgAudioID)
     ])
     .then(values => {
       const [fallUrl, bgUrl] = values

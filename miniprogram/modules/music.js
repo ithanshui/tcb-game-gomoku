@@ -1,18 +1,34 @@
-const FALL_AUDIO_URL = '/audio/fall.mp3'
-const BG_AUDIO_URL = '/audio/bgm.mp3'
+import { getTempFileURL } from './../shared/cloud.js'
+const FALL_AUDIO_ID = 'cloud://wuziqi-9koeb.7775-wuziqi-9koeb-1259633363/fall.mp3'
+const BG_AUDIO_ID = 'cloud://wuziqi-9koeb.7775-wuziqi-9koeb-1259633363/bgm.mp3'
 
 class Music {
   constructor() {
     this.fallAudio = wx.createInnerAudioContext()
-    this.fallAudio.autoplay = false
-    this.fallAudio.loop = false
-    this.fallAudio.src = FALL_AUDIO_URL
-
     this.bgAudio = wx.createInnerAudioContext()
-    this.bgAudio.autoplay = true
-    this.bgAudio.loop = true
-    this.bgAudio.volume = 0.2
-    this.bgAudio.src = BG_AUDIO_URL
+    this.init()
+  }
+
+  async init() {
+    Promise.all([
+      getTempFileURL(FALL_AUDIO_ID),
+      getTempFileURL(BG_AUDIO_ID)
+    ])
+    .then(values => {
+      const [fallUrl, bgUrl] = values
+      if (bgUrl) {
+        this.bgAudio.autoplay = true
+        this.bgAudio.loop = true
+        this.bgAudio.volume = 0.2
+        this.bgAudio.src = bgUrl
+      }
+
+      if (fallUrl) {
+        this.fallAudio.autoplay = false
+        this.fallAudio.loop = false
+        this.fallAudio.src = fallUrl
+      }
+    })
   }
 
   playFallAudio() {

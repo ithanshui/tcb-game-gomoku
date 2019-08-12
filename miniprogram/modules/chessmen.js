@@ -7,6 +7,7 @@ import {
   CHESS_BLACK_COLOR,
   CHESS_WHITE_COLOR
 } from './../shared/contants.js'
+import music from './music.js'
 
 class Chessmen {
   constructor() {
@@ -134,6 +135,8 @@ class Chessmen {
     }
 
     this.chessmenLog[row][col] = color === CHESS_BLACK_COLOR ? CHESS_BLACK_NUM : CHESS_WHITE_NUM
+
+    music.playFallAudio()
 
     return { col, row, success: true }
   }

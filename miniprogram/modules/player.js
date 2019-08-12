@@ -64,6 +64,9 @@ class Player {
       .match({
         people: $.eq(1)
       })
+      .sort({
+        createTimestamp: -1
+      })
       .limit(1)
       .end()
 

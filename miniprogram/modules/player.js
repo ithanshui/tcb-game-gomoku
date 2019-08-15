@@ -45,9 +45,23 @@ class Player {
     }
 
     const identity = await this.judgeIdentity()
-    console.log('identity is', identity)
+    const that = this
 
     wx.onTouchStart((event) => this.handleTouch(event))
+
+    wx.onHide(() => {
+      if (!that.roomid) {
+        return
+      }
+      wx.exitMiniProgram({
+        complete: () => {
+          wx.cloud.callFunction({
+            name: 'clearRoom',
+            data: { roomid: that.roomid }
+          })
+        }
+      })
+    })
 
     if (identity === 'owner') {
       this.waitPlayerJoinGame()
@@ -204,6 +218,13 @@ class Player {
           onChange: snapshot => {
             const docChange = snapshot.docChanges[0]
             const doc = snapshot.docs[0]
+
+            if (docChange.dataType === 'remove') {
+              chessmen.updateTitle('对方退出, 请重新进入')
+              main.render()
+              this.watcher.remote.close()
+              return
+            }
 
             if (
               docChange.dataType !== 'update'
